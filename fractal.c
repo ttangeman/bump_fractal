@@ -2,11 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-enum pen_state {
-    PEN_DOWN,
-    PEN_UP
-};
-
 struct turtle_state {
     float heading;
     float x, y;
