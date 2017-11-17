@@ -7,12 +7,11 @@ struct turtle_state {
     float x, y;
 };
 
-FILE *outf;
 static struct turtle_state turtle;
 
 static void draw_line(int x1, int y1, int x2, int y2)
 {
-    fprintf(outf, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" style=\"stroke:rgb(255, 0, 0);stroke-width:2\" />\n", x1, y1, x2, y2);
+    printf("<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" style=\"stroke:rgb(255, 0, 0);stroke-width:2\" />\n", x1, y1, x2, y2);
 }
 
 static void rt(float angle)
@@ -156,24 +155,17 @@ static void sierpinski_carpet(float dist)
 
 int main(int argc, char **argv)
 {
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s [width] [height] [output]\n", argv[0]);
-        return 1;
-    }
-
-    int width = atoi(argv[1]);
-    int height = atoi(argv[2]);
-    outf = fopen(argv[3], "w");
+    int width = 800;
+    int height = 800;
 
     turtle.heading = 0;
-    turtle.x = width/5;
-    turtle.y = height - 100;
+    turtle.x = width / 3;
+    turtle.y = (3 * height) / 4;
 
-    fprintf(outf, "<svg width=\"%d\" height=\"%d\">\n", width, height);
+    printf("<svg width=\"%d\" height=\"%d\">\n", width, height);
 
     // fractal calls go here
     sierpinski_carpet(width/2);
 
-    fprintf(outf, "</svg>\n");
-    fclose(outf);
+    printf("</svg>\n");
 }
