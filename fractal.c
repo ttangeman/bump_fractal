@@ -15,6 +15,17 @@ static void draw_line(int x1, int y1, int x2, int y2)
     fprintf(outf, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" style=\"stroke:rgb(255, 0, 0);stroke-width:2\" />\n", x1, y1, x2, y2);
 }
 
+static void rt(float angle)
+{
+    turtle.heading += angle;
+    turtle.heading = fmodf(turtle.heading, 360);
+}
+
+static void lt(float angle)
+{
+    rt(-angle);
+}
+
 // PI / 180
 #define RAD_CONST 0.0174533
 
@@ -29,15 +40,25 @@ static void fd(float dist)
     turtle.y = dy;
 }
 
-static void rt(float angle)
+static void bd(float dist)
 {
-    turtle.heading += angle;
-    turtle.heading = fmodf(turtle.heading, 360);
+    lt(180);
+    fd(dist);
+    rt(180);
 }
 
-static void lt(float angle)
+static void ud(float dist)
 {
-    rt(-angle);
+    lt(90);
+    fd(dist);
+    rt(90);
+}
+
+static void dd(float dist)
+{
+    rt(90);
+    fd(dist);
+    lt(90);
 }
 
 static void draw_bump_fractal(float dist)
@@ -58,6 +79,81 @@ static void draw_bump_fractal(float dist)
     draw_bump_fractal(dt);
 }
 
+static void snowflake_fractal(int width)
+{
+    draw_bump_fractal(width/2);
+    rt(120);
+    draw_bump_fractal(width/2);
+    rt(120);
+    draw_bump_fractal(width/2);
+}
+
+static void triangle(float dist)
+{
+    fd(dist);
+    lt(120);
+    fd(dist);
+    lt(120);
+    fd(dist);
+    lt(120);
+}
+
+static void sierpinski_triangle(float dist)
+{
+    if (dist < 10) {
+        triangle(dist);
+        return;
+    }
+
+    sierpinski_triangle(dist/2);
+    fd(dist/2);
+    sierpinski_triangle(dist/2);
+    lt(120);
+    fd(dist/2);
+    rt(120);
+    sierpinski_triangle(dist/2);
+    rt(120);
+    fd(dist/2);
+    lt(120);
+}
+
+static void square(float dist)
+{
+    fd(dist);
+    lt(90);
+    fd(dist);
+    lt(90);
+    fd(dist);
+    lt(90);
+    fd(dist);
+    lt(90);
+}
+
+static void sierpinski_carpet(float dist)
+{
+    if (dist < 5) {
+        square(dist);
+        return;
+    }
+
+    sierpinski_carpet(dist / 3);
+    fd(dist/3);
+    sierpinski_carpet(dist / 3);
+    fd(dist/3);
+    sierpinski_carpet(dist / 3);
+    ud(dist/3);
+    sierpinski_carpet(dist / 3);
+    ud(dist/3);
+    sierpinski_carpet(dist / 3);
+    bd(dist/3);
+    sierpinski_carpet(dist / 3);
+    bd(dist/3);
+    sierpinski_carpet(dist / 3);
+    dd(dist/3);
+    sierpinski_carpet(dist / 3);
+    dd(dist/3);
+}
+
 int main(int argc, char **argv)
 {
     if (argc != 4) {
@@ -70,12 +166,13 @@ int main(int argc, char **argv)
     outf = fopen(argv[3], "w");
 
     turtle.heading = 0;
-    turtle.x = 0;
-    turtle.y = height / 2;
+    turtle.x = width/5;
+    turtle.y = height - 100;
 
     fprintf(outf, "<svg width=\"%d\" height=\"%d\">\n", width, height);
 
-    draw_bump_fractal(width);
+    // fractal calls go here
+    sierpinski_carpet(width/2);
 
     fprintf(outf, "</svg>\n");
     fclose(outf);
